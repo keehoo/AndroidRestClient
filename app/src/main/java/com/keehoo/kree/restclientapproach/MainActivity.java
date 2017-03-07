@@ -4,8 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
-import java.util.List;
+import android.util.Log;
+import android.widget.Toast;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -30,22 +30,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://localhost:8080/api/contacts")
+                .setEndpoint("http://10.0.3.2:8080/api")
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .build();
 
         RestClinetInterface restClinetInterface = restAdapter.create(RestClinetInterface.class);
 
-        restClinetInterface.listContact(new Callback<RestClinetInterface.ContactListCallback>() {
+        restClinetInterface.listContact(new Callback<RestClinetInterface.ContactResponse>() {
+
             @Override
-            public void success(RestClinetInterface.ContactListCallback contactListCallback, Response response) {
-                ContactAdapter contactAdapter = new ContactAdapter(MainActivity.this, )
-                        //TODO: continue with the code... :(
+            public void success(RestClinetInterface.ContactResponse contactResponse, Response response) {
+
+                System.out.println("response" + response.getBody());
+                System.out.println("reason: "+ response.getReason());
+                System.out.println("additioanl: "+ response.toString());
+
+                ContactAdapter contactAdapter = new ContactAdapter(MainActivity.this, contactResponse.getListOfContacts());
+                recyclerView.setAdapter(contactAdapter);
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                Log.d("MainActivity", "response: "+error.getUrl()+"\n"+error.getMessage()+"\n"+error.getBody());
+                Toast.makeText(MainActivity.this, "Blad", Toast.LENGTH_LONG).show();
             }
         });
 

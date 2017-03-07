@@ -15,12 +15,14 @@ public interface RestClinetInterface {
 
 
     @GET("/contacts")
-    public void listContact(Callback<ContactListCallback> callback);
+    public void listContact(Callback<ContactResponse> callback);
 
-    @POST("/contact")
-    public void addContact(@Body Contact contact, Callback<Void> callback,)
+    @POST("/contacts")
+    public void addContact(@Body Contact contact, Callback<Void> callback);
 
-    class ContactListCallback {
+    public static class ContactResponse {
+
+        private List<Contact> listOfContacts;
 
         public List<Contact> getListOfContacts() {
             return listOfContacts;
@@ -29,8 +31,6 @@ public interface RestClinetInterface {
         public void setListOfContacts(List<Contact> listOfContacts) {
             this.listOfContacts = listOfContacts;
         }
-
-        private List<Contact> listOfContacts;
 
 
     }
