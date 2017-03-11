@@ -2,10 +2,14 @@ package com.keehoo.kree.restclientapproach;
 
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.http.Body;
-import retrofit.http.GET;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+
 
 /**
  * Created by k on 06.03.17.
@@ -14,24 +18,13 @@ import retrofit.http.POST;
 public interface RestClinetInterface {
 
 
-    @GET("/contacts")
-    public void listContact(Callback<ContactResponse> callback);
-
-    @POST("/contacts")
-    public void addContact(@Body Contact contact, Callback<Void> callback);
-
-    public static class ContactResponse {
-
-        private List<Contact> listOfContacts;
-
-        public List<Contact> getListOfContacts() {
-            return listOfContacts;
-        }
-
-        public void setListOfContacts(List<Contact> listOfContacts) {
-            this.listOfContacts = listOfContacts;
-        }
+    @GET("contacts")
+    Call<List<Contact>> listContact();
 
 
-    }
+    public static final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl("http://10.0.3.2:8080/api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build();
+
 }

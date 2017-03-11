@@ -1,16 +1,18 @@
 package com.keehoo.kree.restclientapproach;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import java.io.IOException;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,32 +31,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://10.0.3.2:8080/api")
-                .setLogLevel(RestAdapter.LogLevel.FULL)
-                .build();
 
-        RestClinetInterface restClinetInterface = restAdapter.create(RestClinetInterface.class);
-
-        restClinetInterface.listContact(new Callback<RestClinetInterface.ContactResponse>() {
-
+        RestClinetInterface interfejs = RestClinetInterface.retrofit.create(RestClinetInterface.class);
+        Call<List<Contact>> getContacts = interfejs.listContact();
+        getContacts.enqueue(new Callback<List<Contact>>() {
             @Override
-            public void success(RestClinetInterface.ContactResponse contactResponse, Response response) {
-
-                System.out.println("response" + response.getBody());
-                System.out.println("reason: "+ response.getReason());
-                System.out.println("additioanl: "+ response.toString());
-
-                ContactAdapter contactAdapter = new ContactAdapter(MainActivity.this, contactResponse.getListOfContacts());
-                recyclerView.setAdapter(contactAdapter);
+            public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
+                List<Contact> contacts = response.body();
+                ContactAdapter adapter = new ContactAdapter(MainActivity.this, contacts);
+                recyclerView.setAdapter(adapter);
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                Log.d("MainActivity", "response: "+error.getUrl()+"\n"+error.getMessage()+"\n"+error.getBody());
-                Toast.makeText(MainActivity.this, "Blad", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<List<Contact>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Niestety cos poszlo nie tak", Toast.LENGTH_LONG).show();
             }
         });
-
     }
 }
