@@ -1,8 +1,5 @@
 package com.keehoo.kree.restclientapproach;
 
-/**
- * Created by k on 03.03.17.
- */
 
 class Contact {
 
